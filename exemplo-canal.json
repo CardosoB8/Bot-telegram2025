@@ -1,0 +1,71 @@
+{
+  "bot": {
+    "name": "Postador Automático",
+    "token": "SEU_TOKEN_AQUI"
+  },
+  
+  "channels": {
+    "@meucanal": {
+      "daily_schedule": [
+        {
+          "time": "08:00",
+          "message": "☀️ **BOM DIA!**\n\nQue seu dia seja produtivo e cheio de conquistas! 🚀",
+          "image": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400"
+        },
+        {
+          "time": "12:00",
+          "poll": {
+            "question": "🏆 **ENQUETE DO DIA**\n\nQual sua meta para esta semana?",
+            "options": [
+              "💪 Mais produtividade",
+              "📚 Aprender algo novo",
+              "🏋️‍♀️ Exercícios físicos",
+              "🧘‍♂️ Mais equilíbrio"
+            ]
+          }
+        },
+        {
+          "time": "15:00",
+          "message": "⏰ **HORA DO CAFÉ!** ☕\n\nPausa para recarregar as energias!",
+          "buttons": [
+            [
+              {"text": "📊 Ver Estatísticas", "url": "https://stats.com"},
+              {"text": "💡 Dica do Dia", "callback": "callback:dica"}
+            ]
+          ]
+        },
+        {
+          "time": "20:00",
+          "message": "🌙 **BOA NOITE!**\n\nDescanse bem para amanhã ser ainda melhor! 😴",
+          "image": "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=400"
+        }
+      ]
+    }
+  },
+  
+  "commands": {
+    "callback:dica": {
+      "action": "edit_message",
+      "message": "💡 **DICA DO DIA:**\n\nOrganize suas tarefas por prioridade! \n\n✅ Importante + Urgente\n✅ Importante\n✅ Urgente\n✅ Tarefas comuns",
+      "buttons": [
+        [
+          {"text": "⬅️ Voltar", "callback": "callback:voltar"}
+        ]
+      ]
+    },
+    
+    "callback:voltar": {
+      "action": "edit_message",
+      "message": "📅 **PROGRAMAÇÃO DIÁRIA:**\n\n08:00 - Bom dia ☀️\n12:00 - Enquete 🏆\n15:00 - Café ☕\n20:00 - Boa noite 🌙"
+    }
+  },
+  
+  "tasks": [
+    {
+      "name": "Relatório Semanal",
+      "type": "report",
+      "schedule": "every sunday at 21:00",
+      "action": "send_report @admin"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "bot": {
+    "name": "Moderador Automático",
+    "token": "SEU_TOKEN_AQUI",
+    "admins": ["@seuusuario"]
+  },
+  
+  "features": {
+    "delete_commands": true,
+    "welcome_new_members": true
+  },
+  
+  "groups": {
+    "@meugrupo": {
+      "welcome_message": "👋 Bem-vindo(a) {user_name} ao grupo!\n\n📖 Por favor, leia as regras fixadas.\n🎉 Divirta-se e participe!",
+      
+      "rules": "📜 **REGRAS DO GRUPO:**\n\n✅ Respeite todos os membros\n✅ Sem spam ou flood\n✅ Sem conteúdo adulto\n✅ Mantenha o foco no tema\n✅ Sem divulgação não autorizada\n\n⚠️ Infratores serão advertidos ou removidos",
+      
+      "mod_commands": {
+        "/ban @username": "Banir usuário do grupo",
+        "/mute @username 30m": "Silenciar por 30 minutos",
+        "/warn @username": "Dar advertência"
+      },
+      
+      "auto_responses": {
+        "regras": "📌 As regras estão fixadas no grupo!",
+        "admin": "👥 Admins: @seuusuario",
+        "silêncio": "🔇 Por favor, mantenham o respeito!"
+      }
+    }
+  },
+  
+  "commands": {
+    "/regras": {
+      "message": "📜 **REGRAS DO GRUPO:**\n\n1. Respeito acima de tudo\n2. Sem spam\n3. Sem links suspeitos\n4. Mantenha o tema\n5. Divirta-se!",
+      "only_admins": false
+    },
+    
+    "/admins": {
+      "message": "👥 **ADMINISTRADORES:**\n\n• @seuusuario\n• @outroadmin",
+      "only_admins": false
+    }
+  },
+  
+  "tasks": [
+    {
+      "name": "Limpeza diária",
+      "type": "cleanup",
+      "schedule": "every day at 04:00",
+      "action": "limpar_mensagens_antigas"
+    }
+  ]
+}
