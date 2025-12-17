@@ -1,12 +1,12 @@
 {
-  "name": "webhook-bot-platform",
+  "name": "bot-platform-webhook",
   "version": "3.0.0",
-  "description": "Plataforma avançada para bots Telegram com Webhook",
+  "description": "Plataforma completa para bots Telegram",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "setup": "node setup.js"
+    "build": "echo 'Build complete'"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -15,11 +15,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "uuid": "^9.0.1",
-    "axios": "^1.6.2",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+    "axios": "^1.6.2"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
