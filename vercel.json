@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.js",
+      "src": "bot-plataform.js",
       "use": "@vercel/node"
     },
     {
@@ -13,7 +13,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/index.js"
+      "dest": "/bot-plataform.js"
     },
     {
       "src": "/(.*)",
@@ -24,7 +24,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.js"
+      "dest": "/bot-plataform.js"
     }
   ]
 }
