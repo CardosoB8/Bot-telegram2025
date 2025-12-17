@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Platform Webhook</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .bot-card {
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .bot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bot-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-running {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-stopped {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .code-editor {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .example-card {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .example-card:hover {
+            background: #f8f9fa;
+            transform: scale(1.02);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light glass-card mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-robot me-2"></i>
+                <span class="fw-bold" style="color: var(--primary);">Bot Platform</span>
+                <small class="text-muted ms-2">Webhook Edition</small>
+            </a>
+            <div class="navbar-nav">
+                <a class="nav-link active" href="#dashboard"><i class="fas fa-home me-1"></i> Dashboard</a>
+                <a class="nav-link" href="#create"><i class="fas fa-plus me-1"></i> Criar Bot</a>
+                <a class="nav-link" href="#examples"><i class="fas fa-code me-1"></i> Exemplos</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container mb-5">
+        <!-- Dashboard Section -->
+        <section id="dashboard">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="text-white mb-4"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</h2>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase opacity-75">Total Bots</h6>
+                                <h2 class="stat-number" id="total-bots">0</h2>
+                            </div>
+                            <i class="fas fa-robot fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase opacity-75">Ativos</h6>
+                                <h2 class="stat-number" id="active-bots">0</h2>
+                            </div>
+                            <i class="fas fa-play-circle fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase opacity-75">Comandos</h6>
+                                <h2 class="stat-number" id="total-commands">0</h2>
+                            </div>
+                            <i class="fas fa-terminal fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase opacity-75">Agendados</h6>
+                                <h2 class="stat-number" id="total-scheduled">0</h2>
+                            </div>
+                            <i class="fas fa-clock fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bots List -->
+            <div class="glass-card p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0"><i class="fas fa-list me-2"></i> Meus Bots</h4>
+                    <button class="btn btn-primary" onclick="showCreateSection()">
+                        <i class="fas fa-plus me-2"></i> Novo Bot
+                    </button>
+                </div>
+                <div id="bots-container" class="row">
+                    <!-- Bots serão carregados aqui -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Create Bot Section -->
+        <section id="create" style="display: none;">
+            <div class="glass-card p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0"><i class="fas fa-plus-circle me-2"></i> Criar Novo Bot</h3>
+                    <button class="btn btn-outline-secondary" onclick="showDashboard()">
+                        <i class="fas fa-arrow-left me-2"></i> Voltar
+                    </button>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <!-- Template Selector -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">📋 Escolha um Template</h5>
+                            <div class="list-group">
+                                <a href="#" class="list-group-item list-group-item-action example-card" onclick="loadTemplate('simple')">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">🤖 Bot Simples</h6>
+                                        <small class="text-muted">Fácil</small>
+                                    </div>
+                                    <p class="mb-1">Comandos básicos e botões</p>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action example-card" onclick="loadTemplate('aviator')">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">🚀 Bot Aviator</h6>
+                                        <small class="text-muted">Avançado</small>
+                                    </div>
+                                    <p class="mb-1">Sinais automáticos com troca de casas</p>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action example-card" onclick="loadTemplate('group')">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">👥 Bot de Grupo</h6>
+                                        <small class="text-muted">Moderação</small>
+                                    </div>
+                                    <p class="mb-1">Gerenciamento automático de grupos</p>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Configuration Form -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">⚙️ Configuração</h5>
+                            <div class="mb-3">
+                                <label class="form-label">Nome do Bot</label>
+                                <input type="text" class="form-control" id="bot-name" placeholder="Meu Bot Incrível">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Token do Bot</label>
+                                <input type="text" class="form-control" id="bot-token" placeholder="1234567890:ABCdef...">
+                                <div class="form-text">
+                                    <a href="https://t.me/BotFather" target="_blank" class="text-decoration-none">
+                                        <i class="fas fa-external-link-alt me-1"></i> Obter token no @BotFather
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="validateJSON()">
+                                <i class="fas fa-check me-2"></i> Validar JSON
+                            </button>
+                            <button class="btn btn-success" onclick="createBot()">
+                                <i class="fas fa-rocket me-2"></i> Criar Bot
+                            </button>
+                        </div>
+
+                        <!-- Validation Result -->
+                        <div id="validation-result" class="mt-3"></div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <!-- JSON Editor -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><i class="fas fa-code me-2"></i> Configuração JSON</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary me-2" onclick="formatJSON()">
+                                        <i class="fas fa-align-left me-1"></i> Formatar
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="clearEditor()">
+                                        <i class="fas fa-trash me-1"></i> Limpar
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea id="json-editor" class="form-control code-editor" rows="20">
+{
+  "bot": {
+    "name": "Meu Bot",
+    "token": "SEU_TOKEN_AQUI"
+  },
+  "commands": {
+    "start": {
+      "message": "👋 Olá! Eu sou o {bot_name}",
+      "buttons": [
+        { "text": "🌐 Site", "url": "https://google.com" }
+      ]
+    }
+  }
+}</textarea>
+                        </div>
+
+                        <!-- Live Preview -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-eye me-2"></i> Visualização</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="json-preview">
+                                    <!-- Preview será gerado aqui -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-white py-4">
+        <div class="container">
+            <p class="mb-0">🤖 Bot Platform Webhook v3.0 • Sistema completo para gerenciamento de bots Telegram</p>
+            <small class="opacity-75">Usa Webhook para melhor performance e estabilidade</small>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Estado da aplicação
+        let currentBots = [];
+        
+        // Carregar bots ao iniciar
+        document.addEventListener('DOMContentLoaded', loadBots);
+        
+        async function loadBots() {
+            try {
+                const response = await fetch('/api/bots');
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentBots = data.bots;
+                    updateStats(data);
+                    renderBots(data.bots);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar bots:', error);
+            }
+        }
+        
+        function updateStats(data) {
+            document.getElementById('total-bots').textContent = data.count;
+            
+            const active = data.bots.filter(b => b.status === 'running').length;
+            const totalCommands = data.bots.reduce((sum, bot) => sum + bot.commands, 0);
+            const totalScheduled = data.bots.reduce((sum, bot) => sum + bot.scheduled, 0);
+            
+            document.getElementById('active-bots').textContent = active;
+            document.getElementById('total-commands').textContent = totalCommands;
+            document.getElementById('total-scheduled').textContent = totalScheduled;
+        }
+        
+        function renderBots(bots) {
+            const container = document.getElementById('bots-container');
+            
+            if (bots.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-robot fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted">Nenhum bot criado ainda</h4>
+                        <p class="text-muted">Comece criando seu primeiro bot!</p>
+                        <button class="btn btn-primary" onclick="showCreateSection()">
+                            <i class="fas fa-plus me-2"></i> Criar Primeiro Bot
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = bots.map(bot => `
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card bot-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title mb-1">${bot.name}</h5>
+                                    <span class="badge bg-light text-dark">${bot.type}</span>
+                                </div>
+                                <span class="bot-status ${bot.status === 'running' ? 'status-running' : 'status-stopped'}">
+                                    ${bot.status === 'running' ? '▶️ Online' : '⏸️ Pausado'}
+                                </span>
+                            </div>
+                            
+                            <p class="card-text text-muted small">
+                                <i class="fas fa-hashtag me-1"></i> ID: ${bot.id.substring(0, 8)}...
+                            </p>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-primary fw-bold">${bot.commands}</div>
+                                        <small class="text-muted">Comandos</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-primary fw-bold">${bot.scheduled}</div>
+                                        <small class="text-muted">Agendados</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                ${bot.status === 'running' ? 
+                                    `<button class="btn btn-outline-danger btn-sm" onclick="controlBot('${bot.id}', 'stop')">
+                                        <i class="fas fa-stop me-1"></i> Parar
+                                    </button>` :
+                                    `<button class="btn btn-outline-success btn-sm" onclick="controlBot('${bot.id}', 'start')">
+                                        <i class="fas fa-play me-1"></i> Iniciar
+                                    </button>`
+                                }
+                                <button class="btn btn-outline-secondary btn-sm" onclick="deleteBot('${bot.id}')">
+                                    <i class="fas fa-trash me-1"></i> Remover
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function controlBot(botId, action) {
+            try {
+                const response = await fetch(\`/api/bots/\${botId}/control\`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(\`Bot \${action === 'start' ? 'iniciado' : 'parado'} com sucesso!\`, 'success');
+                    loadBots();
+                }
+            } catch (error) {
+                showToast('Erro ao controlar bot', 'error');
+            }
+        }
+        
+        async function deleteBot(botId) {
+            if (!confirm('Tem certeza que deseja remover este bot? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(\`/api/bots/\${botId}\`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Bot removido com sucesso!', 'success');
+                    loadBots();
+                }
+            } catch (error) {
+                showToast('Erro ao remover bot', 'error');
+            }
+        }
+        
+        function showCreateSection() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('create').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+        
+        function showDashboard() {
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('create').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+        
+        function loadTemplate(type) {
+            const templates = {
+                simple: {
+                    name: "Bot Simples",
+                    json: {
+                        "bot": {
+                            "name": "Bot Simples",
+                            "token": "SEU_TOKEN_AQUI",
+                            "channel": "@meucanal"
+                        },
+                        "commands": {
+                            "start": {
+                                "message": "👋 Olá {user_name}! Eu sou o {bot_name}\\n\\nComo posso ajudar?",
+                                "buttons": [
+                                    { "text": "🌐 Site Oficial", "url": "https://meusite.com" },
+                                    { "text": "📞 Contato", "callback": "contato" }
+                                ]
+                            },
+                            "ajuda": {
+                                "message": "🤖 **COMANDOS DISPONÍVEIS:**\\n\\n• /start - Iniciar bot\\n• /ajuda - Mostra esta mensagem\\n• /info - Informações\\n\\nUse os botões para navegar!"
+                            }
+                        },
+                        "callbacks": {
+                            "contato": {
+                                "message": "📞 **Entre em contato:**\\n\\n📧 Email: contato@site.com\\n📱 WhatsApp: +258 84 123 4567\\n\\nHorário: Seg-Sex 9h-18h"
+                            }
+                        },
+                        "schedule": [
+                            {
+                                "time": "09:00",
+                                "message": "☀️ **Bom dia!** Hora de começar o dia com energia! 🚀",
+                                "channel": "@meucanal"
+                            },
+                            {
+                                "time": "18:00",
+                                "message": "🌅 **Boa tarde!** Um ótimo final de dia para todos! 😊",
+                                "channel": "@meucanal",
+                                "image": "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65"
+                            }
+                        ]
+                    }
+                },
+                
+                aviator: {
+                    name: "Bot Aviator",
+                    json: {
+                        "bot": {
+                            "name": "Sinais Aviator",
+                            "token": "SEU_TOKEN_AQUI"
+                        },
+                        "type": "aviator",
+                        "aviator_config": {
+                            "channel": "@sinaisaviatormoza",
+                            "image": "https://imgur.com/a/uYNMXKF",
+                            "links": [
+                                "https://media1.placard.co.mz/redirect.aspx?pid=5905&bid=1690",
+                                "https://record.elephantbet.com/_rhoOOvBxBOAWqcfzuvZcQGNd7ZgqdRLk/1/",
+                                "https://tracking.olabet.co.mz/C.ashx?btag=a_969b_12c_&affid=941&siteid=969&adid=12&c=",
+                                "https://affiliates.bantubet.co.mz/links/?btag=2307928"
+                            ],
+                            "brands": {
+                                "https://media1.placard.co.mz/redirect.aspx?pid=5905&bid=1690": "Placard",
+                                "https://record.elephantbet.com/_rhoOOvBxBOAWqcfzuvZcQGNd7ZgqdRLk/1/": "Elephantbet",
+                                "https://tracking.olabet.co.mz/C.ashx?btag=a_969b_12c_&affid=941&siteid=969&adid=12&c=": "Olabet",
+                                "https://affiliates.bantubet.co.mz/links/?btag=2307928": "Bantubet"
+                            },
+                            "interval": 180
+                        }
+                    }
+                },
+                
+                group: {
+                    name: "Bot de Grupo",
+                    json: {
+                        "bot": {
+                            "name": "Moderador de Grupo",
+                            "token": "SEU_TOKEN_AQUI",
+                            "admins": ["@admin1", "@admin2"]
+                        },
+                        "commands": {
+                            "regras": {
+                                "message": "📜 **REGRAS DO GRUPO:**\\n\\n1. Respeite todos os membros\\n2. Sem spam ou flood\\n3. Mantenha o tema do grupo\\n4. Sem conteúdo impróprio\\n\\n⚠️ Infratores serão advertidos ou removidos",
+                                "only_admins": false
+                            },
+                            "admins": {
+                                "message": "👥 **ADMINISTRADORES:**\\n\\n• @admin1\\n• @admin2\\n\\nEntre em contato para dúvidas ou problemas.",
+                                "only_admins": false
+                            }
+                        },
+                        "auto_responses": {
+                            "bom dia": "Bom dia! ☀️",
+                            "boa tarde": "Boa tarde! 🌤️",
+                            "boa noite": "Boa noite! 🌙",
+                            "obrigado": "De nada! 😊"
+                        },
+                        "features": {
+                            "welcome_new_members": true,
+                            "delete_commands": true
+                        }
+                    }
+                }
+            };
+            
+            const template = templates[type];
+            if (!template) return;
+            
+            document.getElementById('bot-name').value = template.name;
+            document.getElementById('json-editor').value = JSON.stringify(template.json, null, 2);
+            updatePreview();
+        }
+        
+        function formatJSON() {
+            try {
+                const editor = document.getElementById('json-editor');
+                const json = JSON.parse(editor.value);
+                editor.value = JSON.stringify(json, null, 2);
+                showToast('JSON formatado com sucesso!', 'success');
+            } catch (error) {
+                showToast('Erro ao formatar JSON: ' + error.message, 'error');
+            }
+        }
+        
+        function clearEditor() {
+            document.getElementById('json-editor').value = '';
+            document.getElementById('bot-name').value = '';
+            document.getElementById('bot-token').value = '';
+        }
+        
+        async function validateJSON() {
+            const jsonText = document.getElementById('json-editor').value;
+            
+            try {
+                const json = JSON.parse(jsonText);
+                
+                const response = await fetch('/api/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(json)
+                });
+                
+                const result = await response.json();
+                const validationDiv = document.getElementById('validation-result');
+                
+                if (result.success) {
+                    validationDiv.innerHTML = \`
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>✅ JSON Válido!</strong>
+                            <div class="mt-2">
+                                <small>Tipo: <span class="badge bg-primary">\${result.stats.type}</span></small>
+                                <small class="ms-2">Comandos: <span class="badge bg-info">\${result.stats.commands}</span></small>
+                                <small class="ms-2">Agendados: <span class="badge bg-info">\${result.stats.schedule}</span></small>
+                            </div>
+                            \${result.warnings.length > 0 ? 
+                                \`<div class="mt-2">
+                                    <small class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i> \${result.warnings.join(', ')}</small>
+                                </div>\` : ''
+                            }
+                        </div>
+                    \`;
+                } else {
+                    validationDiv.innerHTML = \`
+                        <div class="alert alert-danger">
+                            <i class="fas fa-times-circle me-2"></i>
+                            <strong>❌ Erros encontrados:</strong>
+                            <ul class="mb-0 mt-2">
+                                \${result.errors.map(e => \`<li>\${e}</li>\`).join('')}
+                            </ul>
+                        </div>
+                    \`;
+                }
+                
+            } catch (error) {
+                document.getElementById('validation-result').innerHTML = \`
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times-circle me-2"></i>
+                        <strong>❌ JSON Inválido:</strong>
+                        <p class="mb-0 mt-2">\${error.message}</p>
+                    </div>
+                \`;
+            }
+        }
+        
+        async function createBot() {
+            const name = document.getElementById('bot-name').value;
+            const token = document.getElementById('bot-token').value;
+            const jsonText = document.getElementById('json-editor').value;
+            
+            if (!token) {
+                showToast('Por favor, insira o token do bot', 'warning');
+                return;
+            }
+            
+            if (!name) {
+                showToast('Por favor, insira um nome para o bot', 'warning');
+                return;
+            }
+            
+            try {
+                const config = JSON.parse(jsonText);
+                config.bot.name = name;
+                config.bot.token = token;
+                
+                const response = await fetch('/api/bots', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(\`✅ Bot criado com sucesso! ID: \${data.botId.substring(0, 8)}...\`, 'success');
+                    showDashboard();
+                    loadBots();
+                } else {
+                    showToast('Erro ao criar bot: ' + data.error, 'error');
+                }
+                
+            } catch (error) {
+                showToast('Erro: ' + error.message, 'error');
+            }
+        }
+        
+        function updatePreview() {
+            const editor = document.getElementById('json-editor');
+            const preview = document.getElementById('json-preview');
+            
+            try {
+                const config = JSON.parse(editor.value);
+                
+                let html = '<div class="row">';
+                
+                // Bot Info
+                html += \`
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0"><i class="fas fa-robot me-2"></i> Informações do Bot</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Nome:</strong> \${config.bot?.name || 'Não definido'}</p>
+                                <p><strong>Tipo:</strong> \${config.type || 'simple'}</p>
+                                \${config.bot?.channel ? \`<p><strong>Canal:</strong> \${config.bot.channel}</p>\` : ''}
+                            </div>
+                        </div>
+                    </div>
+                \`;
+                
+                // Commands Preview
+                const commands = Object.keys(config.commands || {});
+                html += \`
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0"><i class="fas fa-terminal me-2"></i> Comandos (\${commands.length})</h6>
+                            </div>
+                            <div class="card-body">
+                                \${commands.length > 0 ? 
+                                    commands.map(cmd => \`<span class="badge bg-primary me-1 mb-1">/\${cmd}</span>\`).join('') :
+                                    '<p class="text-muted mb-0">Nenhum comando definido</p>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                \`;
+                
+                // Schedule Preview
+                const schedule = config.schedule || [];
+                html += \`
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0"><i class="fas fa-clock me-2"></i> Posts Agendados (\${schedule.length})</h6>
+                            </div>
+                            <div class="card-body">
+                                \${schedule.length > 0 ? 
+                                    schedule.map(post => \`
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                <strong>\${post.time}</strong> - \${post.channel || 'Canal padrão'}
+                                            </div>
+                                            <small class="text-muted">\${(post.message || '').substring(0, 30)}...</small>
+                                        </div>
+                                    \`).join('') :
+                                    '<p class="text-muted mb-0">Nenhum post agendado</p>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                \`;
+                
+                html += '</div>';
+                preview.innerHTML = html;
+                
+            } catch (error) {
+                preview.innerHTML = \`
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        JSON inválido para visualização
+                    </div>
+                \`;
+            }
+        }
+        
+        // Atualizar preview quando o JSON mudar
+        document.getElementById('json-editor').addEventListener('input', updatePreview);
+        
+        function showToast(message, type = 'info') {
+            // Criar elemento toast
+            const toast = document.createElement('div');
+            toast.className = \`alert alert-\${type} alert-dismissible fade show position-fixed\`;
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '9999';
+            toast.style.minWidth = '300px';
+            toast.innerHTML = \`
+                \${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            \`;
+            
+            document.body.appendChild(toast);
+            
+            // Remover após 5 segundos
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+        
+        // Inicializar preview
+        updatePreview();
+    </script>
+</body>
+</html>
