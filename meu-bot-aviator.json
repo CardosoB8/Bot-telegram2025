@@ -1,0 +1,19 @@
+{
+  "bot": {
+    "name": "Sinais Aviator",
+    "token": "SEU_TOKEN_DO_AVIATOR"
+  },
+  "type": "aviator_signals",
+  "aviator_config": {
+    "channel": "@sinaisaviatormoza",
+    "image": "https://imgur.com/a/uYNMXKF",
+    "links": [
+      "https://media1.placard.co.mz/redirect.aspx?pid=5905&bid=1690",
+      "https://record.elephantbet.com/_rhoOOvBxBOAWqcfzuvZcQGNd7ZgqdRLk/1/"
+    ],
+    "intervals": {
+      "between_signals": 300,
+      "between_cycles": 30
+    }
+  }
+}

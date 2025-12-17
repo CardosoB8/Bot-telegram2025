@@ -1,60 +1,31 @@
 {
   "bot": {
-    "name": "Bot de Teste Simples",
-    "token": "SEU_TOKEN_AQUI"
+    "name": "Meu Bot Simples",
+    "token": "SEU_TOKEN_AQUI",
+    "channel": "@meucanal"
   },
-  
   "commands": {
-    "/start": {
-      "message": "👋 Olá! Eu sou o {bot.name}\n\nComandos disponíveis:\n/start - Iniciar\n/ajuda - Ajuda\n/links - Links úteis",
+    "start": {
+      "message": "👋 Olá! Eu sou o {bot_name}\n\nComandos:\n/start - Iniciar\n/ajuda - Ajuda",
       "buttons": [
-        [
-          {"text": "🔗 Nosso Site", "url": "https://google.com"},
-          {"text": "📞 Suporte", "url": "https://t.me/suporte"}
-        ]
+        { "text": "🌐 Site", "url": "https://google.com" },
+        { "text": "📞 Contato", "callback": "contato" }
       ]
     },
-    
-    "/ajuda": {
-      "message": "🤖 **Como me usar:**\n\n• /start - Iniciar conversa\n• /ajuda - Mostra esta mensagem\n• Use os botões para navegar",
-      "image": "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=400"
-    },
-    
-    "/links": {
-      "message": "🔗 **Links importantes:**",
-      "buttons": [
-        [
-          {"text": "🌐 Site Oficial", "url": "https://site.com"},
-          {"text": "📢 Canal", "url": "https://t.me/canal"}
-        ],
-        [
-          {"text": "🎥 YouTube", "url": "https://youtube.com"},
-          {"text": "📸 Instagram", "url": "https://instagram.com"}
-        ]
-      ]
+    "ajuda": {
+      "message": "🤖 Como usar:\n\n• /start - Iniciar\n• /ajuda - Esta mensagem\n\nUse os botões para navegar!"
     }
   },
-  
-  "auto_messages": {
-    "oi": "Olá! Como posso ajudar? 😊",
-    "olá": "Olá! Como posso ajudar? 😊",
-    "bom dia": "Bom dia! ☀️",
-    "boa tarde": "Boa tarde! 🌤️",
-    "boa noite": "Boa noite! 🌙",
-    "obrigado": "De nada! 😊"
+  "callbacks": {
+    "contato": {
+      "message": "📞 Entre em contato:\n\nEmail: contato@site.com\nTelefone: +258 84 123 4567"
+    }
   },
-  
-  "daily_posts": [
+  "schedule": [
     {
       "time": "09:00",
-      "message": "🌅 Bom dia! Que seu dia seja incrível!",
+      "message": "☀️ Bom dia a todos!",
       "channel": "@meucanal"
-    },
-    {
-      "time": "18:00",
-      "message": "⏰ Boa tarde! Hora de um café? ☕",
-      "channel": "@meucanal",
-      "image": "https://images.unsplash.com/photo-1498804103079-a6351b050096?w-400"
     }
   ]
 }
