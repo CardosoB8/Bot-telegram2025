@@ -1,0 +1,39 @@
+{
+  "bot": {
+    "name": "Meu Bot",
+    "token": "",
+    "default_channel": "@meucanal"
+  },
+  "commands": {
+    "start": {
+      "message": "👋 Olá {user_name}, eu sou {bot_name}!",
+      "buttons": [
+        {
+          "text": "🌐 Site",
+          "url": "https://google.com"
+        },
+        {
+          "text": "📞 WhatsApp",
+          "url": "https://wa.me/258841234567"
+        }
+      ]
+    },
+    "ajuda": {
+      "message": "📖 Comandos disponíveis:\n/start - Iniciar bot\n/ajuda - Ver esta mensagem"
+    }
+  },
+  "auto_messages": [
+    {
+      "type": "schedule",
+      "time": "09:00",
+      "message": "☀️ Bom dia! Tenha um ótimo dia!",
+      "target": "@meucanal"
+    },
+    {
+      "type": "schedule",
+      "time": "18:00",
+      "message": "🌙 Boa noite! Até amanhã!",
+      "target": "@meucanal"
+    }
+  ]
+}
