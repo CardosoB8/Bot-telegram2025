@@ -4,8 +4,445 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Construtor de Bot Telegram</title>
-    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
+            height: calc(100vh - 150px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar h3 {
+            margin-bottom: 20px;
+            color: #444;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .block-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .block-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: grab;
+            border: 2px dashed #ccc;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .block-item:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .block-item i {
+            font-size: 1.2rem;
+            color: #667eea;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Builder Area */
+        .builder-area {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+        }
+
+        .builder-area h2 {
+            margin-bottom: 20px;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .blocks-container {
+            min-height: 300px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        .block {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .block-header h4 {
+            font-size: 1.2rem;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .remove-block {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .block-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group small {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        /* Preview Section */
+        .preview-section {
+            margin-top: 30px;
+        }
+
+        .preview-section h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .message-preview {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .message-content {
+            padding: 10px 0;
+            line-height: 1.5;
+            min-height: 60px;
+        }
+
+        .message-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .message-button {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        /* JSON Sidebar */
+        .json-sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .json-sidebar h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .json-editor {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        #jsonEditor {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: none;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .modal-content input,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        .modal-content textarea {
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Responsivo */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .sidebar,
+            .json-sidebar {
+                display: none;
+            }
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .block {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Utilitários */
+        .button-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .button-item input {
+            flex: 1;
+        }
+
+        .remove-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .buttons-container {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -99,6 +536,455 @@
         </div>
     </div>
 
-    <script src="/app.js"></script>
+    <script>
+        class BotBuilder {
+            constructor() {
+                this.config = {
+                    bot: { name: '', token: '', default_channel: '' },
+                    commands: {},
+                    auto_messages: []
+                };
+                
+                this.init();
+            }
+            
+            async init() {
+                console.log("✅ BotBuilder inicializando...");
+                await this.loadConfig();
+                this.setupEventListeners();
+                this.setupDragAndDrop();
+                this.renderBlocks();
+            }
+            
+            async loadConfig() {
+                try {
+                    console.log("📡 Carregando configuração...");
+                    const response = await fetch('/api/config');
+                    if (response.ok) {
+                        this.config = await response.json();
+                        console.log("✅ Configuração carregada:", this.config);
+                        this.updateJsonEditor();
+                        this.renderPreview();
+                    } else {
+                        console.warn("⚠️ Não foi possível carregar configuração, usando padrão");
+                        this.createDefaultConfig();
+                    }
+                } catch (error) {
+                    console.error("❌ Erro ao carregar configuração:", error);
+                    this.createDefaultConfig();
+                }
+            }
+            
+            createDefaultConfig() {
+                this.config = {
+                    bot: {
+                        name: "Meu Bot",
+                        token: "",
+                        default_channel: "@meucanal"
+                    },
+                    commands: {
+                        start: {
+                            message: "👋 Olá {user_name}, eu sou {bot_name}!",
+                            buttons: [
+                                { text: "🌐 Site", url: "https://google.com" },
+                                { text: "📞 WhatsApp", url: "https://wa.me/258841234567" }
+                            ]
+                        },
+                        ajuda: {
+                            message: "📖 Comandos disponíveis:\n/start - Iniciar bot\n/ajuda - Ver esta mensagem"
+                        }
+                    },
+                    auto_messages: [
+                        {
+                            type: "schedule",
+                            time: "09:00",
+                            message: "☀️ Bom dia! Tenha um ótimo dia!",
+                            target: "@meucanal"
+                        }
+                    ]
+                };
+            }
+            
+            setupEventListeners() {
+                console.log("🔧 Configurando event listeners...");
+                
+                // Botões principais
+                document.getElementById('saveConfig').addEventListener('click', () => this.saveConfig());
+                document.getElementById('restartBot').addEventListener('click', () => this.restartBot());
+                document.getElementById('testMessage').addEventListener('click', () => this.showTestModal());
+                document.getElementById('applyJson').addEventListener('click', () => this.applyJson());
+                
+                // Modal de teste
+                document.getElementById('sendTest').addEventListener('click', () => this.sendTestMessage());
+                document.getElementById('closeTest').addEventListener('click', () => this.hideTestModal());
+                
+                // Fechar modal ao clicar fora
+                document.getElementById('testModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'testModal') {
+                        this.hideTestModal();
+                    }
+                });
+                
+                console.log("✅ Event listeners configurados");
+            }
+            
+            setupDragAndDrop() {
+                const draggables = document.querySelectorAll('.draggable');
+                const container = document.getElementById('blocksContainer');
+                
+                draggables.forEach(draggable => {
+                    draggable.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', draggable.dataset.type);
+                        draggable.classList.add('dragging');
+                    });
+                    
+                    draggable.addEventListener('dragend', () => {
+                        draggable.classList.remove('dragging');
+                    });
+                });
+                
+                container.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    container.classList.add('drag-over');
+                });
+                
+                container.addEventListener('dragleave', () => {
+                    container.classList.remove('drag-over');
+                });
+                
+                container.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    container.classList.remove('drag-over');
+                    
+                    const blockType = e.dataTransfer.getData('text/plain');
+                    this.addBlock(blockType);
+                });
+            }
+            
+            addBlock(blockType) {
+                console.log(`➕ Adicionando bloco: ${blockType}`);
+                
+                let title = '';
+                let html = '';
+                
+                switch(blockType) {
+                    case 'bot-info':
+                        title = 'Informações do Bot';
+                        html = `
+                            <div class="block-content">
+                                <div class="form-group">
+                                    <label>Nome do Bot</label>
+                                    <input type="text" class="bot-name" value="${this.config.bot?.name || ''}" 
+                                           placeholder="Meu Bot Incrível">
+                                </div>
+                                <div class="form-group">
+                                    <label>Token do Bot</label>
+                                    <input type="text" class="bot-token" value="${this.config.bot?.token || ''}" 
+                                           placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11">
+                                </div>
+                                <div class="form-group">
+                                    <label>Canal Padrão</label>
+                                    <input type="text" class="bot-channel" value="${this.config.bot?.default_channel || ''}" 
+                                           placeholder="@meucanal">
+                                </div>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'command':
+                        title = 'Novo Comando';
+                        html = `
+                            <div class="block-content">
+                                <div class="form-group">
+                                    <label>Comando (sem /)</label>
+                                    <input type="text" class="command-name" value="novocomando" placeholder="start">
+                                </div>
+                                <div class="form-group">
+                                    <label>Mensagem</label>
+                                    <textarea class="command-message" placeholder="Digite a mensagem...">Olá {user_name}!</textarea>
+                                    <small>Variáveis: {user_name}, {first_name}, {bot_name}, {chat_id}</small>
+                                </div>
+                                <div class="buttons-container"></div>
+                                <button class="btn btn-sm add-button"><i class="fas fa-plus"></i> Adicionar Botão</button>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'schedule':
+                        title = 'Novo Agendamento';
+                        html = `
+                            <div class="block-content">
+                                <div class="form-group">
+                                    <label>Horário (HH:MM)</label>
+                                    <input type="time" class="schedule-time" value="09:00">
+                                </div>
+                                <div class="form-group">
+                                    <label>Mensagem</label>
+                                    <textarea class="schedule-message" placeholder="Mensagem agendada...">Bom dia! ☀️</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Destino</label>
+                                    <input type="text" class="schedule-target" value="${this.config.bot?.default_channel || ''}" 
+                                           placeholder="@canal ou chat_id">
+                                </div>
+                            </div>
+                        `;
+                        break;
+                }
+                
+                const block = this.createBlock(blockType, title, html);
+                document.getElementById('blocksContainer').appendChild(block);
+                this.setupBlockEvents(block);
+                this.updateConfigFromUI();
+            }
+            
+            renderBlocks() {
+                console.log("🎨 Renderizando blocos...");
+                const container = document.getElementById('blocksContainer');
+                container.innerHTML = '';
+                
+                // Bot Info (sempre presente)
+                const botInfoBlock = this.createBlock('bot-info', 'Informações do Bot', `
+                    <div class="block-content">
+                        <div class="form-group">
+                            <label>Nome do Bot</label>
+                            <input type="text" class="bot-name" value="${this.config.bot?.name || ''}" 
+                                   placeholder="Meu Bot Incrível">
+                        </div>
+                        <div class="form-group">
+                            <label>Token do Bot</label>
+                            <input type="text" class="bot-token" value="${this.config.bot?.token || ''}" 
+                                   placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11">
+                        </div>
+                        <div class="form-group">
+                            <label>Canal Padrão</label>
+                            <input type="text" class="bot-channel" value="${this.config.bot?.default_channel || ''}" 
+                                   placeholder="@meucanal">
+                        </div>
+                    </div>
+                `);
+                container.appendChild(botInfoBlock);
+                this.setupBlockEvents(botInfoBlock);
+                
+                console.log("✅ Blocos renderizados");
+            }
+            
+            createBlock(type, title, content) {
+                const block = document.createElement('div');
+                block.className = 'block';
+                block.dataset.type = type;
+                block.innerHTML = `
+                    <div class="block-header">
+                        <h4><i class="fas fa-${this.getBlockIcon(type)}"></i> ${title}</h4>
+                        <button class="remove-block"><i class="fas fa-trash"></i></button>
+                    </div>
+                    ${content}
+                `;
+                return block;
+            }
+            
+            getBlockIcon(type) {
+                const icons = {
+                    'bot-info': 'info-circle',
+                    'command': 'terminal',
+                    'message': 'envelope',
+                    'buttons': 'th-large',
+                    'schedule': 'clock'
+                };
+                return icons[type] || 'cube';
+            }
+            
+            setupBlockEvents(block) {
+                // Remover bloco
+                block.querySelector('.remove-block').addEventListener('click', () => {
+                    block.remove();
+                    this.updateConfigFromUI();
+                });
+                
+                // Adicionar botão (se houver)
+                const addButton = block.querySelector('.add-button');
+                if (addButton) {
+                    addButton.addEventListener('click', (e) => {
+                        const container = e.target.previousElementSibling;
+                        const buttonItem = document.createElement('div');
+                        buttonItem.className = 'button-item';
+                        buttonItem.innerHTML = `
+                            <input type="text" class="button-text" placeholder="Texto do botão">
+                            <input type="text" class="button-url" placeholder="URL">
+                            <button class="remove-button"><i class="fas fa-trash"></i></button>
+                        `;
+                        container.appendChild(buttonItem);
+                        
+                        // Adicionar evento para remover botão
+                        buttonItem.querySelector('.remove-button').addEventListener('click', () => {
+                            buttonItem.remove();
+                            this.updateConfigFromUI();
+                        });
+                        
+                        // Adicionar eventos de input
+                        buttonItem.querySelectorAll('input').forEach(input => {
+                            input.addEventListener('input', () => this.updateConfigFromUI());
+                        });
+                        
+                        this.updateConfigFromUI();
+                    });
+                }
+                
+                // Input listeners
+                block.querySelectorAll('input, textarea').forEach(input => {
+                    input.addEventListener('input', () => this.updateConfigFromUI());
+                });
+            }
+            
+            updateConfigFromUI() {
+                console.log("🔄 Atualizando configuração da UI...");
+                
+                // Atualizar informações do bot
+                const botName = document.querySelector('.bot-name')?.value || '';
+                const botToken = document.querySelector('.bot-token')?.value || '';
+                const botChannel = document.querySelector('.bot-channel')?.value || '';
+                
+                this.config.bot = {
+                    name: botName,
+                    token: botToken,
+                    default_channel: botChannel
+                };
+                
+                // Atualizar comandos (simplificado para demonstração)
+                this.config.commands = {
+                    start: {
+                        message: "👋 Olá {user_name}, eu sou {bot_name}!",
+                        buttons: [
+                            { text: "🌐 Site", url: "https://google.com" },
+                            { text: "📞 WhatsApp", url: "https://wa.me/258841234567" }
+                        ]
+                    }
+                };
+                
+                // Atualizar JSON editor e preview
+                this.updateJsonEditor();
+                this.renderPreview();
+                
+                console.log("✅ Configuração atualizada:", this.config);
+            }
+            
+            updateJsonEditor() {
+                document.getElementById('jsonEditor').value = JSON.stringify(this.config, null, 2);
+            }
+            
+            async applyJson() {
+                try {
+                    const jsonText = document.getElementById('jsonEditor').value;
+                    const newConfig = JSON.parse(jsonText);
+                    this.config = newConfig;
+                    this.renderBlocks();
+                    this.renderPreview();
+                    alert('✅ JSON aplicado com sucesso!');
+                } catch (error) {
+                    alert('❌ Erro: JSON inválido!');
+                }
+            }
+            
+            renderPreview() {
+                // Atualizar pré-visualização da mensagem
+                const preview = document.getElementById('messagePreview');
+                const buttonsContainer = document.getElementById('buttonsPreview');
+                
+                if (this.config.commands?.start?.message) {
+                    preview.innerHTML = this.config.commands.start.message
+                        .replace(/{user_name}/g, '@usuário')
+                        .replace(/{first_name}/g, 'João')
+                        .replace(/{bot_name}/g, this.config.bot?.name || 'Bot')
+                        .replace(/{chat_id}/g, '123456789');
+                } else {
+                    preview.textContent = 'Nenhuma mensagem configurada';
+                }
+                
+                // Atualizar botões
+                buttonsContainer.innerHTML = '';
+                if (this.config.commands?.start?.buttons) {
+                    this.config.commands.start.buttons.forEach(btn => {
+                        const button = document.createElement('a');
+                        button.className = 'message-button';
+                        button.href = btn.url;
+                        button.target = '_blank';
+                        button.textContent = btn.text;
+                        buttonsContainer.appendChild(button);
+                    });
+                }
+            }
+            
+            async saveConfig() {
+                try {
+                    console.log("💾 Salvando configuração...");
+                    const response = await fetch('/api/config', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.config)
+                    });
+                    
+                    const result = await response.json();
+                    alert(result.message || '✅ Configuração salva com sucesso!');
+                } catch (error) {
+                    alert('❌ Erro ao salvar configuração: ' + error.message);
+                }
+            }
+            
+            async restartBot() {
+                try {
+                    const response = await fetch('/api/restart-bot', {
+                        method: 'POST'
+                    });
+                    
+                    const result = await response.json();
+                    alert(result.message || '✅ Bot reiniciado!');
+                } catch (error) {
+                    alert('❌ Erro ao reiniciar bot: ' + error.message);
+                }
+            }
+            
+            showTestModal() {
+                document.getElementById('testModal').classList.add('active');
+            }
+            
+            hideTestModal() {
+                document.getElementById('testModal').classList.remove('active');
+            }
+            
+            async sendTestMessage() {
+                const chatId = document.getElementById('testChatId').value;
+                const message = document.getElementById('testMessageText').value;
+                
+                if (!chatId || !message) {
+                    alert('⚠️ Preencha todos os campos!');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/send-test', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chatId, message })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('✅ Mensagem de teste enviada!');
+                        this.hideTestModal();
+                    } else {
+                        alert('❌ Erro: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('❌ Erro ao enviar mensagem: ' + error.message);
+                }
+            }
+        }
+
+        // Inicializar aplicação quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("🚀 Inicializando Construtor de Bot Telegram...");
+            window.botBuilder = new BotBuilder();
+        });
+    </script>
 </body>
 </html>
