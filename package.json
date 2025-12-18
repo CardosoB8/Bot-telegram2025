@@ -1,21 +1,12 @@
 {
   "name": "telegram-bot-builder",
   "version": "1.0.0",
-  "description": "Construtor visual de bots Telegram",
   "main": "backend/index.js",
-  "scripts": {
-    "start": "node backend/index.js",
-    "dev": "nodemon backend/index.js"
-  },
   "dependencies": {
+    "telegraf": "^4.12.0",
     "express": "^4.18.2",
-    "telegraf": "^4.15.3",
-    "node-cron": "^3.0.2",
     "cors": "^2.8.5",
-    "fs": "^0.0.1-security",
-    "path": "^0.12.7"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
+    "node-cron": "^3.0.2",
+    "body-parser": "^1.20.2"
   }
 }
