@@ -1,159 +1,48 @@
-const { Telegraf } = require('telegraf');
-const path = require('path');
+const { Telegraf, Markup } = require('telegraf');
 
-let bot = null;
-let currentConfig = {};
+let botInstance = null;
 
-function replaceVariables(text, context) {
-    if (!text) return '';
-    
-    const variables = {
-        '{user_name}': context.username || context.first_name || 'Usuário',
-        '{first_name}': context.first_name || 'Usuário',
-        '{bot_name}': currentConfig.bot?.name || 'Bot',
-        '{chat_id}': context.chatId || '',
-    };
-    
-    return text.replace(/{(\w+)}/g, (match, key) => {
-        const varName = `{${key}}`;
-        return variables[varName] !== undefined ? variables[varName] : match;
-    });
-}
-
-async function initBot(config) {
-    currentConfig = config;
-    
-    // Parar bot anterior se existir
-    if (bot) {
-        bot.stop();
-    }
-    
-    // Verificar se token existe
-    if (!config.bot?.token) {
-        console.log('⚠️ Token não configurado. Bot não iniciado.');
-        return null;
-    }
-    
-    try {
-        bot = new Telegraf(config.bot.token);
-        
-        // Configurar comandos
-        setupCommands(bot, config);
-        
-        // Iniciar bot
-        await bot.launch();
-        console.log('🤖 Bot iniciado com sucesso!');
-        
-        return bot;
-    } catch (error) {
-        console.error('❌ Erro ao iniciar bot:', error.message);
-        return null;
-    }
-}
-
-function setupCommands(botInstance, config) {
-    // Comando /start padrão
-    botInstance.start((ctx) => {
-        const command = config.commands?.start;
-        if (command) {
-            const message = replaceVariables(command.message, {
-                username: ctx.from.username,
-                first_name: ctx.from.first_name,
-                chatId: ctx.chat.id
-            });
-            
-            if (command.buttons && command.buttons.length > 0) {
-                const buttons = command.buttons.map(btn => {
-                    return [{ text: btn.text, url: btn.url }];
-                });
-                
-                return ctx.reply(message, {
-                    reply_markup: {
-                        inline_keyboard: buttons
-                    }
-                });
-            }
-            
-            return ctx.reply(message);
-        }
-    });
-    
-    // Outros comandos
-    if (config.commands) {
-        Object.entries(config.commands).forEach(([command, config]) => {
-            if (command !== 'start') {
-                botInstance.command(command, (ctx) => {
-                    const message = replaceVariables(config.message, {
-                        username: ctx.from.username,
-                        first_name: ctx.from.first_name,
-                        chatId: ctx.chat.id
-                    });
-                    
-                    if (config.buttons && config.buttons.length > 0) {
-                        const buttons = config.buttons.map(btn => {
-                            return [{ text: btn.text, url: btn.url }];
-                        });
-                        
-                        return ctx.reply(message, {
-                            reply_markup: {
-                                inline_keyboard: buttons
-                            }
-                        });
-                    }
-                    
-                    return ctx.reply(message);
-                });
-            }
-        });
-    }
-    
-    // Middleware para logging
-    botInstance.use((ctx, next) => {
-        console.log(`📨 Nova mensagem de ${ctx.from?.username || ctx.from?.id}: ${ctx.message?.text}`);
-        return next();
-    });
-}
-
-async function updateBotConfig(newConfig) {
-    currentConfig = newConfig;
-    
-    // Reiniciar bot com nova configuração
-    if (newConfig.bot?.token) {
-        return initBot(newConfig);
-    }
-    
-    return null;
-}
-
-async function sendTestMessage(chatId, message) {
-    if (!bot) {
-        return { success: false, error: 'Bot não inicializado' };
-    }
-    
-    try {
-        await bot.telegram.sendMessage(chatId, message);
-        return { success: true };
-    } catch (error) {
-        return { success: false, error: error.message };
-    }
-}
-
-async function restartBot() {
-    if (bot) {
-        bot.stop();
-    }
-    
-    if (currentConfig.bot?.token) {
-        return initBot(currentConfig);
-    }
-    
-    return null;
-}
-
-module.exports = {
-    initBot,
-    updateBotConfig,
-    sendTestMessage,
-    restartBot,
-    getBot: () => bot
+const parseMessage = (text, ctx, botName) => {
+    if (!text) return "";
+    return text
+        .replace(/{user_name}/g, ctx.from.username || ctx.from.first_name)
+        .replace(/{first_name}/g, ctx.from.first_name)
+        .replace(/{bot_name}/g, botName)
+        .replace(/{chat_id}/g, ctx.chat.id);
 };
+
+const createButtons = (buttons) => {
+    if (!buttons || buttons.length === 0) return null;
+    return Markup.inlineKeyboard(
+        buttons.map(btn => [Markup.button.url(btn.text, btn.url)])
+    );
+};
+
+const setupBot = (config) => {
+    if (botInstance) {
+        botInstance.stop('RELOAD');
+    }
+
+    if (!config.bot.token) return null;
+
+    const bot = new Telegraf(config.bot.token);
+    const botName = config.bot.name;
+
+    // Registrar Comandos Dinamicamente
+    Object.keys(config.commands).forEach(cmd => {
+        bot.command(cmd, (ctx) => {
+            const cmdData = config.commands[cmd];
+            const message = parseMessage(cmdData.message, ctx, botName);
+            const buttons = createButtons(cmdData.buttons);
+            
+            ctx.reply(message, buttons);
+        });
+    });
+
+    bot.launch();
+    botInstance = bot;
+    console.log(`✅ Bot ${botName} online!`);
+    return bot;
+};
+
+module.exports = { setupBot, parseMessage, createButtons };
