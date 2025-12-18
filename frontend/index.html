@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construtor de Bot Telegram</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-robot"></i> Construtor de Bot Telegram</h1>
+            <p>Crie e gerencie seu bot sem programação!</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Sidebar com blocos -->
+            <aside class="sidebar">
+                <h3><i class="fas fa-puzzle-piece"></i> Blocos</h3>
+                <div class="block-list">
+                    <div class="block-item draggable" data-type="bot-info">
+                        <i class="fas fa-info-circle"></i> Bot Info
+                    </div>
+                    <div class="block-item draggable" data-type="command">
+                        <i class="fas fa-terminal"></i> Comando
+                    </div>
+                    <div class="block-item draggable" data-type="message">
+                        <i class="fas fa-envelope"></i> Mensagem
+                    </div>
+                    <div class="block-item draggable" data-type="buttons">
+                        <i class="fas fa-th-large"></i> Botões
+                    </div>
+                    <div class="block-item draggable" data-type="schedule">
+                        <i class="fas fa-clock"></i> Agendamento
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="saveConfig" class="btn btn-success">
+                        <i class="fas fa-save"></i> Salvar Config
+                    </button>
+                    <button id="restartBot" class="btn btn-warning">
+                        <i class="fas fa-redo"></i> Reiniciar Bot
+                    </button>
+                    <button id="testMessage" class="btn btn-info">
+                        <i class="fas fa-paper-plane"></i> Testar
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Área de construção -->
+            <main class="builder-area">
+                <h2><i class="fas fa-cubes"></i> Construtor Visual</h2>
+                <div id="blocksContainer" class="blocks-container">
+                    <!-- Blocos serão adicionados aqui -->
+                </div>
+
+                <div class="preview-section">
+                    <h3><i class="fas fa-eye"></i> Pré-visualização</h3>
+                    <div class="preview-box">
+                        <div class="message-preview">
+                            <div class="message-header">
+                                <span class="message-sender">Bot</span>
+                                <span class="message-time">Agora</span>
+                            </div>
+                            <div class="message-content" id="messagePreview">
+                                Sua mensagem aparecerá aqui...
+                            </div>
+                            <div class="message-buttons" id="buttonsPreview"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Visualização JSON -->
+            <aside class="json-sidebar">
+                <h3><i class="fas fa-code"></i> JSON Config</h3>
+                <div class="json-editor">
+                    <textarea id="jsonEditor" spellcheck="false"></textarea>
+                </div>
+                <button id="applyJson" class="btn btn-primary">
+                    <i class="fas fa-check"></i> Aplicar JSON
+                </button>
+            </aside>
+        </div>
+
+        <!-- Modal de teste -->
+        <div id="testModal" class="modal">
+            <div class="modal-content">
+                <h3>Testar Mensagem</h3>
+                <input type="text" id="testChatId" placeholder="Chat ID ou @canal">
+                <textarea id="testMessageText" placeholder="Mensagem de teste"></textarea>
+                <div class="modal-actions">
+                    <button id="sendTest" class="btn btn-success">Enviar</button>
+                    <button id="closeTest" class="btn btn-secondary">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
